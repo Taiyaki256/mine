@@ -1,0 +1,8 @@
+[package]
+name = "sattest"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+splr = { version = "0.17.2", features = ["incremental_solver"] }
+itertools = "0.10.5" 

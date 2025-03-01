@@ -9,8 +9,18 @@
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     greetMsg = await invoke("greet", { name });
   }
-</script>
 
+  async function getMap() {
+    // struct Map {
+    // x: i32,
+    // y: i32,
+    // data: Vec<Vec<i32>>
+    const map = await invoke("get_map") as { x: number, y: number, data: { value: number }[][] };
+    console.log(map);
+  }
+
+  getMap();
+</script>
 <main class="container">
   <h1>Welcome to Tauri + Svelte</h1>
 
