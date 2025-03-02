@@ -1,8 +1,7 @@
 pub mod cnf_generator;
 
-use cnf_generator::exactly_k;
-use itertools::Itertools;
-use splr::{cdb::ClauseDBIF, *};
+use cnf_generator::{at_most_k, exactly_k};
+use splr::*;
 
 fn main() {
     let mut rules: Vec<Vec<i32>> = Vec::new();
@@ -23,20 +22,21 @@ fn main() {
 
     let mut next_var = 5; // 既存の変数が1-4を使用している場合
     let variables = vec![1, 2, 3, 4];
-    let cnf = exactly_k(&variables, 1, &mut next_var);
+    // let cnf = exactly_k(&variables, 1, &mut next_var);
+    let cnf = at_most_k(&variables, 3, &mut next_var);
     rules.extend(cnf);
     let mut solver = Solver::try_from((config, rules.as_ref())).expect("panic");
-    for model in solver.iter() {
+    let _ = solver.solve();
+    let mut models = Vec::new();
+    for ans in solver.iter() {
         println!("found!");
-        println!("{:?}", model);
-        // 見つかった解を除外する制約を追加
-        let mut clause = Vec::new();
-        for lit in model.iter() {
-            clause.push(-lit);
-        }
+        println!("{:?}", ans);
+        let mut clause: Vec<i32> = Vec::new();
+        clause.extend(ans.iter().cloned());
         println!("{:?}", clause);
-        let err = solver.add_clause(clause);
-        println!("{:?}", err);
+        models.push(clause);
     }
-    // println!("Total solutions: {}", models.len());
+
+    println!("Total solutions: {}", models.len());
+    println!("{:?}", models);
 }
