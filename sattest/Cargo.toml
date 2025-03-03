@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 splr = { version = "0.17.2", features = ["incremental_solver"] }
 itertools = "0.10.5" 
+rand = "0.9.0"

@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use splr::{SatSolverIF, SolveIF, Solver};
 
 /// 最大K個制約を生成（補助変数使用版）
 /// - variables: 制約を適用するリテラルのスライス
@@ -89,4 +90,28 @@ pub fn implies(a: i32, b: i32) -> Vec<Vec<i32>> {
 /// 変数aとbは同値
 pub fn equivalent(a: i32, b: i32) -> Vec<Vec<i32>> {
     vec![vec![-a, b], vec![-b, a]]
+}
+
+pub fn mineguess(solver: &mut Solver, cell_num: usize) -> Vec<i32> {
+    let mut first_model: Vec<i32> = Vec::new();
+
+    // 最初の解を取得
+    for ans in solver.iter().take(1) {
+        first_model = ans.clone();
+    }
+    // 最初の解をベースに確定値を調査
+    let mut sure_model = vec![0; cell_num];
+
+    for (i, lit) in first_model.iter().enumerate() {
+        if i >= cell_num {
+            break;
+        }
+        // 反対の値を仮定して解を探索
+        if solver.add_clause(vec![-*lit]).is_ok() {
+            sure_model[i] = 0;
+        } else {
+            sure_model[i] = *lit;
+        }
+    }
+    sure_model
 }
